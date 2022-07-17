@@ -1,8 +1,9 @@
-<!---
+<!--- Hugo front matter used to generate the website version of this page:
 linkTitle: Metrics
 --->
 
 # 开放遥测指标
+
 
 <summary>目录</summary>
 
@@ -14,7 +15,7 @@ linkTitle: Metrics
         - [API](#api)
         - [SDK](#sdk)
         - [编程模型](#programming-model)
-- [规格](#specifications)
+- [标准](#specifications)
 - [参考](#references)
 
 <!-- tocstop -->
