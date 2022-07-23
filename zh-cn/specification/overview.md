@@ -49,17 +49,17 @@ weight: 1
 
 在最高架构级别，OpenTelemetry 客户端被组织成[**信号**](glossary.md#signals)。每个信号都提供了一种特殊形式的可观察性。例如，跟踪、指标和行李是三个独立的信号。信号共享一个公共子系统——**上下文传播**——但它们彼此独立运行。
 
-Each signal provides a mechanism for software to describe itself. A codebase, such as web framework or a database client, takes a dependency on various signals in order to describe itself. OpenTelemetry instrumentation code can then be mixed into the other code within that codebase. This makes OpenTelemetry a [**cross-cutting concern**](https://en.wikipedia.org/wiki/Cross-cutting_concern) - a piece of software which is mixed into many other pieces of software in order to provide value. Cross-cutting concerns, by their very nature, violate a core design principle – separation of concerns. As a result, OpenTelemetry client design requires extra care and attention to avoid creating issues for the codebases which depend upon these cross-cutting APIs.
+每个信号都为软件提供了一种自我描述的机制。代码库（例如 Web 框架或数据库客户端）依赖于各种信号来描述自身。然后可以将 OpenTelemetry 检测代码混合到该代码库中的其他代码中。这使得 OpenTelemetry 成为一个[**横切关注点**](https://en.wikipedia.org/wiki/Cross-cutting_concern)- 一种软件，它混合到许多其他软件中以提供价值。横切关注点，就其本质而言，违反了核心设计原则——关注点分离。因此，OpenTelemetry 客户端设计需要格外小心和注意，以避免为依赖于这些横切 API 的代码库产生问题。
 
 OpenTelemetry 客户端旨在将每个信号中必须作为横切关注点导入的部分与可以独立管理的部分分开。 OpenTelemetry 客户端也被设计成一个可扩展的框架。为了实现这些目标，每个信号都包含四种类型的包：API、SDK、语义约定和 Contrib。
 
-### API
+### 接口（API)
 
-API packages consist of the cross-cutting public interfaces used for instrumentation. Any portion of an OpenTelemetry client which is imported into third-party libraries and application code is considered part of the API.
+API 包由用于检测横切的公共接口组成。被导入第三方库和应用程序代码的 OpenTelemetry 客户端的任何部分都被视为 API 的一部分。
 
-### SDK
+### 实现（SDK)
 
-The SDK is the implementation of the API provided by the OpenTelemetry project. Within an application, the SDK is installed and managed by the [application owner](glossary.md#application-owner). Note that the SDK includes additional public interfaces which are not considered part of the API package, as they are not cross-cutting concerns. These public interfaces are defined as [constructors](glossary.md#constructors) and [plugin interfaces](glossary.md#sdk-plugins). Application owners use the SDK constructors; [plugin authors](glossary.md#plugin-author) use the SDK plugin interfaces. [Instrumentation authors](glossary.md#instrumentation-author) MUST NOT directly reference any SDK package of any kind, only the API.
+SDK 是 OpenTelemetry 项目提供的 API 的实现。在应用程序中，SDK 由[应用程序所有者](glossary.md#application-owner)安装和管理。请注意，SDK 包括额外的公共接口，这些接口不被视为 API 包的一部分，因为它们不是横切关注点。这些公共接口被定义为[构造函数](glossary.md#constructors)和[插件接口](glossary.md#sdk-plugins)。应用程序所有者使用 SDK 构造函数；[插件作者](glossary.md#plugin-author)使用 SDK 实现插件。 [监测（Instrumentation）开发者](glossary.md#instrumentation-author)不得直接引用任何类型的 SDK 包，只能引用 API。
 
 ### 语义约定
 
@@ -73,9 +73,9 @@ The SDK is the implementation of the API provided by the OpenTelemetry project. 
 
 ### 贡献包
 
-The OpenTelemetry project maintains integrations with popular OSS projects which have been identified as important for observing modern web services. Example API integrations include instrumentation for web frameworks, database clients, and message queues. Example SDK integrations include plugins for exporting telemetry to popular analysis tools and telemetry storage systems.
+这个项目维护与流行的开源项目的集成，这些项目已被认为对观察现代 Web 服务很重要。示例 API 集成包括用于 Web 框架、数据库客户端和消息队列的检测。示例 SDK 集成包括用于将遥测数据导出到流行分析工具和遥测存储系统的插件。
 
-Some plugins, such as OTLP Exporters and TraceContext Propagators, are required by the OpenTelemetry specification. These required plugins are included as part of the SDK.
+OpenTelemetry 规范指定的一些插件，例如 OTLP Exporters 和 TraceContext Propagators。这些必需的插件包含在 SDK 中。
 
 可选的且独立于 SDK 的插件和工具包称为**Contrib**包。 **API Contrib**是指完全依赖于 API 的包； **SDK Contrib**是指也依赖于 SDK 的包。
 
@@ -153,7 +153,7 @@ Temporal relationships between Spans in a single Trace
 
 当使用 scatter/gather（也称为 fork/join）模式时，根操作会启动多个下游处理操作，并且所有这些操作都会聚合回单个**Span**中。最后一个**Span**链接到它聚合的许多操作。它们都是来自同一个 Trace 的**Span** 。并且类似于**Span**的 Parent 字段。但是，建议不要在这种情况下设置**Span**的 parent，因为从语义上讲，父字段表示单个父场景，在许多情况下，父**Span**完全包含子**Span** 。在分散/聚集和批处理场景中情况并非如此。
 
-## Metric Signal
+## 指标信号
 
 OpenTelemetry 允许使用预定义的聚合和一[组属性](./common/README.md#attribute)来记录原始测量或度量。
 
@@ -165,15 +165,15 @@ OpenTelemetry 允许使用预定义的聚合和一[组属性](./common/README.md
 
 用于记录原始测量的主要类是`Measure`和`Measurement` 。可以使用 OpenTelemetry API 记录附加上下文旁边的`Measurement`列表。因此，用户可以定义聚合这些`Measurement`并使用旁边传递的上下文来定义结果度量的附加属性。
 
-#### Measure
+#### 指标
 
-`Measure` describes the type of the individual values recorded by a library. It defines a contract between the library exposing the measurements and an application that will aggregate those individual measurements into a `Metric`. `Measure` is identified by name, description and a unit of values.
+`Measure`描述了库记录的单个值的类型。它定义了一个约定，在暴露测量的库和聚合这些单独测量成`Metric`的应用程序之间。 `Measure`由名称、描述和值单位标识。
 
-#### Measurement
+#### <a>指标值</a>
 
 `Measurement`描述了为`Measure`收集的单个值。 `Measurement`是 API 表面中的一个空接口。该接口在 SDK 中定义。
 
-### Recording metrics with predefined aggregation
+### 记录预定义聚合的指标
 
 所有类型的预聚合指标的基类称为`Metric` 。它定义了基本的度量属性，例如名称和属性。从`Metric`继承的类定义了它们的聚合类型以及单个测量值或点的结构。 API 定义了以下类型的预聚合指标：
 
@@ -182,7 +182,7 @@ OpenTelemetry 允许使用预定义的聚合和一[组属性](./common/README.md
 
 API 允许构造所选类型的`Metric` 。 SDK 定义了查询要导出的`Metric`的当前值的方式。
 
-Every type of a `Metric` has it's API to record values to be aggregated. API supports both - push and pull model of setting the `Metric` value.
+每种类型的`Metric`都有它的 API 来记录要聚合的值。 API 支持 - 设置`Metric`的推送和拉取模型。
 
 ### Metrics 数据模型和 SDK
 
@@ -236,7 +236,7 @@ Propagators API 当前定义了一种`Propagator`类型：
 
 - `TextMapPropagator`将值注入载体并从载体中提取值作为文本。
 
-## Collector
+## 收集器
 
 OpenTelemetry 收集器是一组组件，可以从 OpenTelemetry 或其他监控/跟踪库（Jaeger、Prometheus 等）检测的进程收集跟踪、指标和最终的其他遥测数据（例如日志），进行聚合和智能采样，以及将跟踪和指标导出到一个或多个监控/跟踪后端。收集器将允许丰富和转换收集的遥测数据（例如添加其他属性或清理个人信息）。
 
